@@ -5,11 +5,14 @@ An autonomous security and tracking drone system utilizing YOLOv8 for real-time 
 # Project Overview: Eqaab (عقـــاب)
 Eqaab is an intelligent, autonomous drone platform designed for high-stakes security environments. By merging Computer Vision with autonomous flight controllers, the system can identify, lock onto, and track specific targets without manual pilot intervention.
 
-Technical Stack
+Technical Stack:
 
-Core Logic: Python / C++ (ArduPilot/PX4)
-AI/Vision: YOLOv8 (Custom trained for security personnel/vehicle detection)
+Core Logic: Python / C++ (ArduPilot/PX4).
+
+AI/Vision: YOLOv8 (Custom trained for security personnel/vehicle detection).
+
 Communication: MAVLink protocol for GCS (Ground Control Station) integration.
+
 Hardware Interface: Raspberry Pi / Jetson Nano (On-board processing).
 
 Key Features:
