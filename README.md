@@ -7,13 +7,10 @@ Eqaab is an intelligent, autonomous drone platform designed for high-stakes secu
 
 Technical Stack:
 
-Core Logic: Python / C++ (ArduPilot/PX4).
-
-AI/Vision: YOLOv8 (Custom trained for security personnel/vehicle detection).
-
-Communication: MAVLink protocol for GCS (Ground Control Station) integration.
-
-Hardware Interface: Raspberry Pi / Jetson Nano (On-board processing).
+- Core Logic: Python / C++ (ArduPilot/PX4).
+- AI/Vision: YOLOv8 (Custom trained for security personnel/vehicle detection).
+- Communication: MAVLink protocol for GCS (Ground Control Station) integration.
+- Hardware Interface: Raspberry Pi / Jetson Nano (On-board processing).
 
 Key Features:
 - Autonomous Mission Planning: Pre-defined patrol routes with dynamic obstacle avoidance.
