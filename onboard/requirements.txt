@@ -1,0 +1,23 @@
+# Eqaab edge node — Raspberry Pi 5 (aarch64 / Bookworm) dependencies.
+# Install on the Pi inside a venv (see README). picamera2 ships with Raspberry Pi OS;
+# create the venv with --system-site-packages so it is visible.
+
+# --- core runtime ---
+python-dotenv>=1.0
+numpy>=1.24,<2.0           # <2.0 for broad wheel compatibility on aarch64
+opencv-python-headless>=4.8   # headless = no GUI/Qt deps, lighter on the Pi
+
+# --- vision: detection + tracking ---
+ultralytics>=8.2          # YOLOv8n + NCNN/ONNX export & inference
+ncnn>=1.0                 # NCNN runtime (preferred inference backend on Pi 5)
+deep-sort-realtime>=1.3   # DeepSort tracker with stable track_ids
+
+# --- flight telemetry ---
+pymavlink>=2.4            # PX4/Pixhawk telemetry & command (NO ROS2/MAVROS)
+
+# --- GCS link ---
+websockets>=12.0          # asyncio WebSocket client (outbound WSS to the GCS)
+
+# NOTE: picamera2 is intentionally NOT listed here — it is provided by the OS package
+#   sudo apt install -y python3-picamera2
+# and picked up via a --system-site-packages venv.

@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* === Core palette === */
+  --bg-deep:       #06080c;
+  --bg-base:       #0c0e14;
+  --bg-surface:    #12151e;
+  --bg-card:       #181c27;
+  --bg-elevated:   #1e2230;
+  --bg-hover:      #252a3a;
+
+  /* === Orange accent ramp === */
+  --orange-50:     #fff7ed;
+  --orange-100:    #ffedd5;
+  --orange-200:    #fed7aa;
+  --orange-300:    #fdba74;
+  --orange-400:    #fb923c;
+  --orange-500:    #f97316;
+  --orange-600:    #ea580c;
+  --orange-700:    #c2410c;
+  --orange-800:    #9a3412;
+  --orange-900:    #7c2d12;
+
+  /* === Accent === */
+  --accent:        var(--orange-500);
+  --accent-dim:    var(--orange-700);
+  --accent-glow:   rgba(249, 115, 22, 0.15);
+  --accent-text:   var(--orange-400);
+
+  /* === Text === */
+  --text-primary:  #e8e8ed;
+  --text-secondary:#8b8d98;
+  --text-muted:    #555766;
+  --text-inverse:  #0c0e14;
+
+  /* === Borders === */
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-default:rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.16);
+  --border-accent: rgba(249,115,22,0.30);
+
+  /* === Status === */
+  --success:       #22c55e;
+  --success-dim:   rgba(34,197,94,0.15);
+  --warning:       #eab308;
+  --warning-dim:   rgba(234,179,8,0.15);
+  --danger:        #ef4444;
+  --danger-dim:    rgba(239,68,68,0.15);
+  --info:          #3b82f6;
+  --info-dim:      rgba(59,130,246,0.15);
+
+  /* === Typography === */
+  --font-ui:       'Inter', -apple-system, sans-serif;
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+
+  /* === Layout === */
+  --radius-sm:     4px;
+  --radius-md:     8px;
+  --radius-lg:     12px;
+  --header-h:      48px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* === Leaflet dark overrides === */
+.leaflet-container {
+  background: var(--bg-deep) !important;
+  font-family: var(--font-ui) !important;
+}
+.leaflet-control-zoom a {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-default) !important;
+}
+.leaflet-control-zoom a:hover {
+  background: var(--bg-hover) !important;
+}
+.leaflet-control-attribution {
+  background: rgba(12,14,20,0.8) !important;
+  color: var(--text-muted) !important;
+  font-size: 10px !important;
+}
+.leaflet-control-attribution a {
+  color: var(--text-muted) !important;
+}
+
+/* Tile darkness filter */
+.leaflet-tile-pane {
+  filter: brightness(0.65) contrast(1.2) saturate(0.3);
+}
+
+/* === Utility === */
+.glow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+.glow-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+.glow-dot.green { background: var(--success); }
+.glow-dot.green::after { background: var(--success); opacity: 0.3; }
+.glow-dot.red { background: var(--danger); }
+.glow-dot.red::after { background: var(--danger); opacity: 0.3; }
+.glow-dot.orange { background: var(--accent); }
+.glow-dot.orange::after { background: var(--accent); opacity: 0.3; }
+
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.6); opacity: 0; }
+}
+
+/* === Panel base === */
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.panel-body {
+  padding: 10px 14px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* === Metric card === */
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.metric-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+.metric-unit {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+/* === Buttons === */
+.cmd-btn {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cmd-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+.cmd-btn:active {
+  transform: scale(0.97);
+}
+.cmd-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+}
+.cmd-btn.primary:hover {
+  background: var(--orange-600);
+}
+.cmd-btn.danger {
+  background: var(--danger-dim);
+  border-color: rgba(239,68,68,0.3);
+  color: var(--danger);
+}
+.cmd-btn.danger:hover {
+  background: rgba(239,68,68,0.25);
+}
+.cmd-btn.success {
+  background: var(--success-dim);
+  border-color: rgba(34,197,94,0.3);
+  color: var(--success);
+}
+.cmd-btn.success:hover {
+  background: rgba(34,197,94,0.25);
+}
+.cmd-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* === Badge / pill === */
+.badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge.success { background: var(--success-dim); color: var(--success); }
+.badge.warning { background: var(--warning-dim); color: var(--warning); }
+.badge.danger  { background: var(--danger-dim);  color: var(--danger);  }
+.badge.info    { background: var(--info-dim);    color: var(--info);    }
+.badge.accent  { background: var(--accent-glow); color: var(--accent);  }

@@ -1,0 +1,41 @@
+# ───────── Secrets / local config ─────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ───────── Python (onboard + gcs/backend) ─────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Trained models / weights (ship separately, too large for git)
+*.pt
+*.onnx
+*_ncnn_model/
+onboard/models/
+
+# ───────── Node / Next.js (gcs/frontend + landing) ─────────
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# ───────── Databases / runtime data ─────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ───────── OS / editor ─────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
