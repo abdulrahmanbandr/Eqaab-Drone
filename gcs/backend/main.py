@@ -200,14 +200,29 @@ async def websocket_endpoint(websocket: WebSocket):
                         "timestamp": time.time(),
                     })
                 elif msg_type == "command":
-                    # Handle inline WebSocket commands (alternative to REST)
-                    from models.schemas import CommandRequest, CommandType
-                    cmd = CommandRequest(
-                        command=CommandType(msg.get("command")),
-                        params=msg.get("params", {}),
-                    )
-                    response = simulator.handle_command(cmd.command, cmd.params)
-                    await ws_manager.broadcast(response)
+                    # Commands originate at a frontend client and must reach the drone.
+                    if simulator is not None:
+                        # Dev/simulator mode: execute locally and broadcast the ACK.
+                        from models.schemas import CommandRequest, CommandType
+                        cmd = CommandRequest(
+                            command=CommandType(msg.get("command")),
+                            params=msg.get("params", {}),
+                        )
+                        response = simulator.handle_command(cmd.command, cmd.params)
+                        await ws_manager.broadcast(response)
+                    else:
+                        # Real-drone mode: forward the command to the on-board Pi (which is
+                        # just another client on this endpoint and ignores non-command types).
+                        await ws_manager.broadcast(msg)
+                elif msg_type in ("telemetry", "detection", "event", "alert", "command_ack"):
+                    # Messages ORIGINATING from the on-board Pi (drop-in for the simulator):
+                    # relay verbatim to all GCS frontend clients — the broker does not
+                    # transform content. Frontend needs zero changes.
+                    await ws_manager.broadcast(msg)
+                    if msg_type == "detection":
+                        mission.add_alert(msg)      # persist to alert/detection history
+                    elif msg_type == "event":
+                        mission.add_event(msg)      # persist to the event log
 
             except json.JSONDecodeError:
                 logger.warning(f"Invalid JSON from client: {data[:100]}")
