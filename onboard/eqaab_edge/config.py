@@ -151,6 +151,11 @@ class TrackerConfig:
     max_cosine_distance: float = field(default_factory=lambda: _float("TRACK_MAX_COSINE_DIST", 0.2))
     # Only emit an alert/detection once a track is "confirmed" and seen this many times.
     confirm_hits: int = field(default_factory=lambda: _int("TRACK_CONFIRM_HITS", 3))
+    # Appearance embedder for DeepSort. "mobilenet" (default, torch) is the lightest
+    # bundled option; alternatives: "torchreid", "clip_<model>". This is the heaviest
+    # part of tracking on the Pi — keep it on CPU and fp32.
+    embedder: str = field(default_factory=lambda: _str("TRACK_EMBEDDER", "mobilenet"))
+    embedder_gpu: bool = field(default_factory=lambda: _bool("TRACK_EMBEDDER_GPU", False))
 
 
 @dataclass
