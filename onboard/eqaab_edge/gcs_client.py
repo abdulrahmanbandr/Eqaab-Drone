@@ -78,8 +78,8 @@ class GcsClient:
         return self._connected.is_set()
 
     # --- thread-safe producer API -------------------------------------
-    def submit_detection(self, message: dict) -> None:
-        """Enqueue an outbound detection from any thread (drops if not connected yet)."""
+    def submit_message(self, message: dict) -> None:
+        """Enqueue any outbound message from any thread (drops if not connected yet)."""
         loop, q = self._loop, self._out_q
         if loop is None or q is None:
             return
@@ -87,6 +87,10 @@ class GcsClient:
             loop.call_soon_threadsafe(q.put_nowait, message)
         except RuntimeError:
             pass  # loop shutting down
+
+    # Back-compat / readability alias: detections go through the same queue.
+    def submit_detection(self, message: dict) -> None:
+        self.submit_message(message)
 
     # --- event loop thread --------------------------------------------
     def _run_loop(self) -> None:

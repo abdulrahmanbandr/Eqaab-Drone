@@ -104,6 +104,7 @@ class MavlinkBridge:
         self._master = None
         self._state = TelemetryState()
         self._lock = threading.Lock()
+        self._send_lock = threading.Lock()   # serialize command writes to the link
         self._thread: Optional[threading.Thread] = None
         self._running = threading.Event()
         self._mavutil = None  # cached pymavlink.mavutil module
@@ -132,6 +133,61 @@ class MavlinkBridge:
         with self._lock:
             # dataclass is flat; shallow copy via replace-free copy of fields.
             return TelemetryState(**vars(self._state))
+
+    # --- command senders (used by the command module) -----------------
+    #
+    # RC OVERRIDE: these issue OFFBOARD/AUTO intent to PX4. They NEVER send
+    # RC_CHANNELS_OVERRIDE and never attempt to defeat the pilot's radio. On PX4,
+    # hardware RC is a higher priority than anything sent here — if the pilot takes
+    # the sticks, the flight controller ignores these commands. That is by design.
+
+    def _can_send(self) -> bool:
+        if self._master is None or not self._state.connected:
+            logger.warning("Cannot send command — MAVLink not connected")
+            return False
+        return True
+
+    def send_command_long(self, command_id: int, p1: float = 0, p2: float = 0,
+                          p3: float = 0, p4: float = 0, p5: float = 0,
+                          p6: float = 0, p7: float = 0) -> bool:
+        """Send a COMMAND_LONG to the flight controller. Returns False if not connected."""
+        if not self._can_send():
+            return False
+        m = self._master
+        try:
+            with self._send_lock:
+                m.mav.command_long_send(m.target_system, m.target_component,
+                                        command_id, 0, p1, p2, p3, p4, p5, p6, p7)
+            return True
+        except Exception:
+            logger.exception("command_long_send failed (id=%s)", command_id)
+            return False
+
+    def set_px4_mode(self, main_mode: int, sub_mode: int = 0) -> bool:
+        """Switch PX4 flight mode via DO_SET_MODE (custom main/sub mode)."""
+        mavutil = self._mavutil
+        base = mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
+        return self.send_command_long(mavutil.mavlink.MAV_CMD_DO_SET_MODE,
+                                      base, main_mode, sub_mode)
+
+    def reposition(self, lat: float, lon: float, alt: float) -> bool:
+        """Fly to a lat/lon/alt (relative) via DO_REPOSITION (COMMAND_INT)."""
+        if not self._can_send():
+            return False
+        m, mavutil = self._master, self._mavutil
+        try:
+            with self._send_lock:
+                m.mav.command_int_send(
+                    m.target_system, m.target_component,
+                    mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT_INT,
+                    mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0,
+                    -1, 0, 0, float("nan"),         # speed=-1 (default), flags, reserved, yaw=keep
+                    int(lat * 1e7), int(lon * 1e7), float(alt),
+                )
+            return True
+        except Exception:
+            logger.exception("reposition failed")
+            return False
 
     # --- connection ----------------------------------------------------
     def _connect(self) -> bool:
