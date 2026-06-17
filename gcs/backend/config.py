@@ -12,27 +12,27 @@ SIMULATOR_ENABLED = True
 TELEMETRY_RATE_HZ = 2            # telemetry updates per second
 DETECTION_INTERVAL_SEC = 8       # average seconds between detections
 
-# --- Drone Home / Launch Point (Jeddah area) ---
-HOME_LAT = 21.4858
-HOME_LON = 39.1925
+# --- Drone Home / Launch Point (Taif area) ---
+HOME_LAT = 21.2854
+HOME_LON = 40.4183
 HOME_ALT = 0.0
 
-# --- Patrol Waypoints (simulated mission near Jeddah) ---
+# --- Patrol Waypoints (simulated mission near Taif) ---
 PATROL_WAYPOINTS = [
-    {"lat": 21.4870, "lon": 39.1940, "alt": 40.0},
-    {"lat": 21.4885, "lon": 39.1960, "alt": 45.0},
-    {"lat": 21.4878, "lon": 39.1985, "alt": 50.0},
-    {"lat": 21.4860, "lon": 39.1975, "alt": 45.0},
-    {"lat": 21.4848, "lon": 39.1950, "alt": 40.0},
-    {"lat": 21.4845, "lon": 39.1920, "alt": 42.0},
+    {"lat": 21.2870, "lon": 40.4200, "alt": 40.0},
+    {"lat": 21.2890, "lon": 40.4225, "alt": 45.0},
+    {"lat": 21.2880, "lon": 40.4255, "alt": 50.0},
+    {"lat": 21.2855, "lon": 40.4245, "alt": 45.0},
+    {"lat": 21.2840, "lon": 40.4215, "alt": 40.0},
+    {"lat": 21.2838, "lon": 40.4185, "alt": 42.0},
 ]
 
 # --- Geofence (polygon around patrol area) ---
 GEOFENCE = [
-    {"lat": 21.4900, "lon": 39.1900},
-    {"lat": 21.4900, "lon": 39.2000},
-    {"lat": 21.4830, "lon": 39.2000},
-    {"lat": 21.4830, "lon": 39.1900},
+    {"lat": 21.2910, "lon": 40.4160},
+    {"lat": 21.2910, "lon": 40.4270},
+    {"lat": 21.2820, "lon": 40.4270},
+    {"lat": 21.2820, "lon": 40.4160},
 ]
 
 # --- Battery ---

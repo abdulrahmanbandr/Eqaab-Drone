@@ -1,7 +1,7 @@
 """
 Eqaab GCS — Drone Simulator
 
-Simulates a drone flying a patrol mission near Jeddah.
+Simulates a drone flying a patrol mission near Taif.
 Generates realistic telemetry, detections, and responds to commands.
 Replace this with the real drone WebSocket connection in production.
 """
@@ -242,7 +242,7 @@ class DroneSimulator:
         dlon = target_lon - self.lon
         dalt = target_alt - self.alt
 
-        # Approximate distance in meters (lat/lon to meters near Jeddah)
+        # Approximate distance in meters (lat/lon to meters near Taif)
         dist_lat = dlat * 111320
         dist_lon = dlon * 111320 * math.cos(math.radians(self.lat))
         horizontal_dist = math.sqrt(dist_lat ** 2 + dist_lon ** 2)

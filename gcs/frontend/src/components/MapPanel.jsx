@@ -1,9 +1,8 @@
-import { useEffect, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, Polygon, CircleMarker, Popup, useMap } from 'react-leaflet';
+import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { useDrone } from '../context/DroneContext';
 
-/* ── Drone icon (orange triangle) ── */
+/* ── Drone icon (orange triangle, rotates with heading) ── */
 function createDroneIcon(heading) {
   return L.divIcon({
     className: '',
@@ -14,7 +13,7 @@ function createDroneIcon(heading) {
       transform:rotate(${heading}deg);transition:transform 0.4s ease;
     ">
       <svg width="28" height="28" viewBox="0 0 28 28">
-        <polygon points="14,2 24,24 14,18 4,24" 
+        <polygon points="14,2 24,24 14,18 4,24"
           fill="#f97316" stroke="#ea580c" stroke-width="1.5" opacity="0.95"/>
       </svg>
     </div>
@@ -27,7 +26,7 @@ function createDroneIcon(heading) {
   });
 }
 
-/* ── Home icon ── */
+/* ── Home icon (blue circle) ── */
 const homeIcon = L.divIcon({
   className: '',
   iconSize: [20, 20],
@@ -43,7 +42,7 @@ const homeIcon = L.divIcon({
   </div>`,
 });
 
-/* ── Waypoint icon ── */
+/* ── Waypoint icon (numbered circle) ── */
 function wpIcon(index) {
   return L.divIcon({
     className: '',
@@ -58,7 +57,7 @@ function wpIcon(index) {
   });
 }
 
-/* ── Detection marker ── */
+/* ── Detection marker (color-coded by threat level) ── */
 function detIcon(threatLevel) {
   const colors = {
     LOW: { bg: 'rgba(34,197,94,0.2)', border: '#22c55e' },
@@ -78,106 +77,168 @@ function detIcon(threatLevel) {
   });
 }
 
-/* ── Map auto-follow ── */
-function MapFollow({ lat, lon }) {
-  const map = useMap();
-  const initialized = useRef(false);
-  useEffect(() => {
-    if (lat && lon && !initialized.current) {
-      map.setView([lat, lon], 16);
-      initialized.current = true;
-    }
-  }, [map, lat, lon]);
-  return null;
-}
-
 export default function MapPanel() {
   const { state } = useDrone();
   const { telemetry: t, trail, config: cfg, detections } = state;
 
-  const droneIcon = useMemo(() => createDroneIcon(t.heading), [t.heading]);
+  // DOM node + Leaflet instance + persistent layer refs
+  const containerRef = useRef(null);
+  const mapRef = useRef(null);
+  const droneMarkerRef = useRef(null);
+  const trailRef = useRef(null);
+  const geofenceRef = useRef(null);
+  const staticLayerRef = useRef(null);   // home + waypoints
+  const detLayerRef = useRef(null);      // detection markers
+  const centeredRef = useRef(false);
 
-  const geofencePositions = cfg.geofence.map(p => [p.lat, p.lon]);
-  const trailPositions = trail.map(p => [p.lat, p.lon]);
+  /* ── 1. Initialize the map once ── */
+  useEffect(() => {
+    if (mapRef.current || !containerRef.current) return;
 
-  // Recent detections with GPS (last 15)
-  const detMarkers = detections
-    .filter(d => d.target_lat && d.target_lon)
-    .slice(0, 15);
+    const map = L.map(containerRef.current, {
+      center: [cfg.home_lat, cfg.home_lon],
+      zoom: 16,
+      zoomControl: false,
+      attributionControl: true,
+    });
+    mapRef.current = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OSM',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Persistent layers (created once, mutated on data change)
+    geofenceRef.current = L.layerGroup().addTo(map);
+    trailRef.current = L.layerGroup().addTo(map);
+    staticLayerRef.current = L.layerGroup().addTo(map);
+    detLayerRef.current = L.layerGroup().addTo(map);
+
+    droneMarkerRef.current = L.marker([t.lat, t.lon], {
+      icon: createDroneIcon(t.heading),
+      zIndexOffset: 1000,
+    }).addTo(map);
+
+    // Leaflet renders into a 0px box until the container has real pixels.
+    // Force a recalculation after the browser has laid the panel out, and
+    // keep it correct on any future container resize.
+    const invalidate = () => map.invalidateSize();
+    const raf = requestAnimationFrame(invalidate);
+    const t0 = setTimeout(invalidate, 200);
+
+    const ro = new ResizeObserver(invalidate);
+    ro.observe(containerRef.current);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t0);
+      ro.disconnect();
+      map.remove();
+      mapRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ── 2. Drone marker: position + heading + follow ── */
+  useEffect(() => {
+    const m = droneMarkerRef.current;
+    if (!m) return;
+    m.setLatLng([t.lat, t.lon]);
+    m.setIcon(createDroneIcon(t.heading));
+
+    // Auto-follow: snap-zoom to the first fix, then smoothly pan to keep the
+    // drone centred as it flies to each patrol waypoint.
+    if (mapRef.current && t.lat && t.lon) {
+      if (!centeredRef.current) {
+        mapRef.current.setView([t.lat, t.lon], 16);
+        centeredRef.current = true;
+      } else {
+        mapRef.current.panTo([t.lat, t.lon], { animate: true, duration: 0.5 });
+      }
+    }
+  }, [t.lat, t.lon, t.heading]);
+
+  /* ── 3. Flight trail (orange polyline) ── */
+  useEffect(() => {
+    const layer = trailRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    const positions = trail.map(p => [p.lat, p.lon]);
+    if (positions.length > 1) {
+      L.polyline(positions, {
+        color: '#f97316', weight: 2, opacity: 0.5,
+      }).addTo(layer);
+    }
+  }, [trail]);
+
+  /* ── 4. Geofence (dashed orange polygon) ── */
+  useEffect(() => {
+    const layer = geofenceRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    const positions = cfg.geofence.map(p => [p.lat, p.lon]);
+    if (positions.length > 0) {
+      L.polygon(positions, {
+        color: '#f97316', weight: 1.5, opacity: 0.6,
+        fillColor: '#f97316', fillOpacity: 0.04,
+        dashArray: '8 4',
+      }).addTo(layer);
+    }
+  }, [cfg.geofence]);
+
+  /* ── 5. Home marker + patrol waypoints ── */
+  useEffect(() => {
+    const layer = staticLayerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+
+    L.marker([cfg.home_lat, cfg.home_lon], { icon: homeIcon })
+      .bindPopup('Home / Launch Point')
+      .addTo(layer);
+
+    cfg.patrol_waypoints.forEach((wp, i) => {
+      L.marker([wp.lat, wp.lon], { icon: wpIcon(i) })
+        .bindPopup(
+          `<span style="font-family:var(--font-mono);font-size:11px;">WP${i + 1}: ${wp.alt}m</span>`
+        )
+        .addTo(layer);
+    });
+  }, [cfg.home_lat, cfg.home_lon, cfg.patrol_waypoints]);
+
+  /* ── 6. Detection markers (color-coded, last 15 with GPS) ── */
+  useEffect(() => {
+    const layer = detLayerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+
+    detections
+      .filter(d => d.target_lat && d.target_lon)
+      .slice(0, 15)
+      .forEach(d => {
+        L.marker([d.target_lat, d.target_lon], { icon: detIcon(d.threat_level) })
+          .bindPopup(
+            `<div style="font-family:var(--font-mono);font-size:11px;">
+              <div><b>${d.detection_class}</b> #${d.track_id}</div>
+              <div>Conf: ${(d.confidence * 100).toFixed(0)}%</div>
+              <div>IFF: ${d.iff_status}</div>
+              <div>Threat: ${d.threat_level}</div>
+            </div>`
+          )
+          .addTo(layer);
+      });
+  }, [detections]);
 
   return (
-    <div className="panel" style={{ position: 'relative' }}>
-      <MapContainer
-        center={[cfg.home_lat, cfg.home_lon]}
-        zoom={16}
-        style={{ height: '100%', width: '100%', borderRadius: 'var(--radius-lg)' }}
-        zoomControl={false}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; OSM'
-        />
-        <MapFollow lat={t.lat} lon={t.lon} />
-
-        {/* Geofence polygon */}
-        {geofencePositions.length > 0 && (
-          <Polygon
-            positions={geofencePositions}
-            pathOptions={{
-              color: '#f97316', weight: 1.5, opacity: 0.6,
-              fillColor: '#f97316', fillOpacity: 0.04,
-              dashArray: '8 4',
-            }}
-          />
-        )}
-
-        {/* Flight trail */}
-        {trailPositions.length > 1 && (
-          <Polyline
-            positions={trailPositions}
-            pathOptions={{
-              color: '#f97316', weight: 2, opacity: 0.5,
-            }}
-          />
-        )}
-
-        {/* Patrol waypoints */}
-        {cfg.patrol_waypoints.map((wp, i) => (
-          <Marker key={`wp-${i}`} position={[wp.lat, wp.lon]} icon={wpIcon(i)}>
-            <Popup>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                WP{i + 1}: {wp.alt}m
-              </span>
-            </Popup>
-          </Marker>
-        ))}
-
-        {/* Home marker */}
-        <Marker position={[cfg.home_lat, cfg.home_lon]} icon={homeIcon}>
-          <Popup>Home / Launch Point</Popup>
-        </Marker>
-
-        {/* Detection markers */}
-        {detMarkers.map((d, i) => (
-          <Marker
-            key={`det-${d.track_id}-${i}`}
-            position={[d.target_lat, d.target_lon]}
-            icon={detIcon(d.threat_level)}
-          >
-            <Popup>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>
-                <div><b>{d.detection_class}</b> #{d.track_id}</div>
-                <div>Conf: {(d.confidence * 100).toFixed(0)}%</div>
-                <div>IFF: {d.iff_status}</div>
-                <div>Threat: {d.threat_level}</div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-
-        {/* Drone marker */}
-        <Marker position={[t.lat, t.lon]} icon={droneIcon} />
-      </MapContainer>
+    <div className="panel" style={{ position: 'relative', padding: 0 }}>
+      {/* Guaranteed pixel height — Leaflet cannot size against a flex/grid 0px box */}
+      <div
+        ref={containerRef}
+        style={{
+          height: 'calc(100vh - 60px)',
+          width: '100%',
+          borderRadius: 'var(--radius-lg)',
+        }}
+      />
 
       {/* Overlay: coordinates + altitude */}
       <div style={{

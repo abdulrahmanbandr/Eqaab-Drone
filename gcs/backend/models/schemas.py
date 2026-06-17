@@ -143,7 +143,7 @@ class CommandRequest(BaseModel):
     params: dict = Field(default_factory=dict)
     # params examples:
     #   takeoff:  {"altitude": 10.0}
-    #   goto:     {"lat": 21.49, "lon": 39.19, "alt": 50.0}
+    #   goto:     {"lat": 21.2890, "lon": 40.4225, "alt": 50.0}
     #   set_mode: {"mode": "AUTO"}
     #   set_speed: {"speed": 5.0}
 

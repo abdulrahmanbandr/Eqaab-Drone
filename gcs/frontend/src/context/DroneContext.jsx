@@ -13,7 +13,7 @@ const initialState = {
 
   // Telemetry
   telemetry: {
-    lat: 21.4858, lon: 39.1925, alt: 0, heading: 0,
+    lat: 21.2854, lon: 40.4183, alt: 0, heading: 0,
     speed: 0, vertical_speed: 0,
     battery: 100, voltage: 16.8,
     gps_fix: 0, satellites: 0,
@@ -35,8 +35,8 @@ const initialState = {
 
   // Mission config (from initial_state)
   config: {
-    home_lat: 21.4858,
-    home_lon: 39.1925,
+    home_lat: 21.2854,
+    home_lon: 40.4183,
     geofence: [],
     patrol_waypoints: [],
     friendly_drone_ids: [],
