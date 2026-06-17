@@ -4,7 +4,7 @@
 
 **Vision-based IFF (Identify Friend or Foe) — no radar, no transponders, cameras only.**
 
-CS graduation capstone project · Open source under the MIT License
+CE graduation capstone project · Open source under the MIT License
 
 </div>
 
