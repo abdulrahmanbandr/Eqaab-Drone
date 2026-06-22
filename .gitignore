@@ -39,3 +39,9 @@ Thumbs.db
 .idea/
 .vscode/
 *.log
+
+# ───────── Large media (demo videos — too large for git, share separately) ─────────
+*.mp4
+*.MP4
+*.mov
+*.MOV

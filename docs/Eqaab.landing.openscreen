@@ -1,0 +1,269 @@
+{
+  "version": 2,
+  "media": {
+    "screenVideoPath": "/Users/abdulrahmanal-otaibi/Library/Application Support/openscreen/recordings/recording-1780942948352.mp4",
+    "cursorCaptureMode": "editable-overlay"
+  },
+  "editor": {
+    "wallpaper": "#000000",
+    "shadowIntensity": 0,
+    "showBlur": false,
+    "showTrimWaveform": true,
+    "motionBlurAmount": 0,
+    "borderRadius": 0,
+    "padding": 0,
+    "cropRegion": {
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    "zoomRegions": [
+      {
+        "id": "zoom-5",
+        "startMs": 2337,
+        "endMs": 19272,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.489,
+          "cy": 0.492
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-6",
+        "startMs": 19272,
+        "endMs": 21156,
+        "depth": 4,
+        "customScale": 2.2,
+        "focus": {
+          "cx": 0.27507989626935536,
+          "cy": 0.6473103263572713
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-7",
+        "startMs": 21156,
+        "endMs": 25160,
+        "depth": 4,
+        "customScale": 2.2,
+        "focus": {
+          "cx": 0.46799845049659433,
+          "cy": 0.6406817920954968
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-8",
+        "startMs": 25160,
+        "endMs": 28105,
+        "depth": 4,
+        "customScale": 2.2,
+        "focus": {
+          "cx": 0.6717689087837474,
+          "cy": 0.6385201055974289
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-9",
+        "startMs": 35983,
+        "endMs": 38523,
+        "depth": 3,
+        "customScale": 1.8,
+        "focus": {
+          "cx": 0.3326052102052016,
+          "cy": 0.5702739411562153
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-10",
+        "startMs": 39118,
+        "endMs": 41881,
+        "depth": 3,
+        "customScale": 1.8,
+        "focus": {
+          "cx": 0.60833073289359,
+          "cy": 0.5738608103454872
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-11",
+        "startMs": 42612,
+        "endMs": 45479,
+        "depth": 3,
+        "customScale": 1.8,
+        "focus": {
+          "cx": 0.35141445987969827,
+          "cy": 0.7222222222222222
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-12",
+        "startMs": 46454,
+        "endMs": 49033,
+        "depth": 3,
+        "customScale": 1.8,
+        "focus": {
+          "cx": 0.6051833041008038,
+          "cy": 0.7222222222222222
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-13",
+        "startMs": 55685,
+        "endMs": 59977,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.4766659851721132,
+          "cy": 0.7222222222222222
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-14",
+        "startMs": 60000,
+        "endMs": 62898,
+        "depth": 3,
+        "customScale": 1.8,
+        "focus": {
+          "cx": 0.29898959465421326,
+          "cy": 0.670352374029154
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-15",
+        "startMs": 62898,
+        "endMs": 65954,
+        "depth": 3,
+        "customScale": 1.8,
+        "focus": {
+          "cx": 0.6082661702516867,
+          "cy": 0.6472911963882618
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-16",
+        "startMs": 72369,
+        "endMs": 75861,
+        "depth": 4,
+        "customScale": 2.2,
+        "focus": {
+          "cx": 0.4712588639127113,
+          "cy": 0.5861422504495543
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-18",
+        "startMs": 86286,
+        "endMs": 88606,
+        "depth": 2,
+        "customScale": 1.5,
+        "focus": {
+          "cx": 0.47043569022844417,
+          "cy": 0.5728086620499675
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-19",
+        "startMs": 28105,
+        "endMs": 35983,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.489,
+          "cy": 0.492
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-22",
+        "startMs": 49033,
+        "endMs": 55685,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.489,
+          "cy": 0.492
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-23",
+        "startMs": 65954,
+        "endMs": 72369,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.489,
+          "cy": 0.492
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-24",
+        "startMs": 75861,
+        "endMs": 86286,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.489,
+          "cy": 0.492
+        },
+        "source": "manual"
+      },
+      {
+        "id": "zoom-25",
+        "startMs": 88606,
+        "endMs": 91971,
+        "depth": 1,
+        "customScale": 1.25,
+        "focus": {
+          "cx": 0.489,
+          "cy": 0.492
+        },
+        "source": "manual"
+      }
+    ],
+    "autoZoomEnabled": false,
+    "autoFocusAll": false,
+    "trimRegions": [
+      {
+        "id": "trim-3",
+        "startMs": 14436,
+        "endMs": 17512
+      },
+      {
+        "id": "trim-4",
+        "startMs": 50006,
+        "endMs": 54228
+      }
+    ],
+    "speedRegions": [],
+    "annotationRegions": [],
+    "aspectRatio": "16:9",
+    "webcamLayoutPreset": "picture-in-picture",
+    "webcamMaskShape": "rectangle",
+    "webcamMirrored": false,
+    "webcamReactiveZoom": true,
+    "webcamSizePreset": 25,
+    "webcamPosition": null,
+    "exportQuality": "good",
+    "exportFormat": "mp4",
+    "gifFrameRate": 15,
+    "gifLoop": true,
+    "gifSizePreset": "medium",
+    "cursorTheme": "default"
+  }
+}
